@@ -1,0 +1,251 @@
+import { useState, useEffect } from 'react';
+import { Layout } from '@/components/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ItemsService } from '@/services/items.service';
+import { DeliveryOrdersService } from '@/services/delivery-orders.service';
+import { Item } from '@/types/api';
+import { Search, Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+
+interface CartItem {
+  item: Item;
+  quantity: number;
+}
+
+export default function CreateDeliveryOrder() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [items, setItems] = useState<Item[]>([]);
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = items.filter((item) =>
+        item.itemCode.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredItems(filtered.slice(0, 5));
+    } else {
+      setFilteredItems([]);
+    }
+  }, [searchTerm, items]);
+
+  const loadItems = async () => {
+    try {
+      const data = await ItemsService.getAllItems();
+      setItems(data);
+    } catch (error) {
+      toast.error('Failed to load items');
+    }
+  };
+
+  const addToCart = (item: Item) => {
+    const existingItem = cart.find((cartItem) => cartItem.item.itemCode === item.itemCode);
+    if (existingItem) {
+      toast.error('Item already in cart');
+      return;
+    }
+    setCart([...cart, { item, quantity: 1 }]);
+    setSearchTerm('');
+    setFilteredItems([]);
+  };
+
+  const updateQuantity = (itemCode: string, quantity: number) => {
+    if (quantity <= 0) return;
+    setCart(
+      cart.map((cartItem) =>
+        cartItem.item.itemCode === itemCode ? { ...cartItem, quantity } : cartItem
+      )
+    );
+  };
+
+  const removeFromCart = (itemCode: string) => {
+    setCart(cart.filter((cartItem) => cartItem.item.itemCode !== itemCode));
+  };
+
+  const handleSaveAsPending = async () => {
+    if (cart.length === 0) {
+      toast.error('Please add items to the order');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await DeliveryOrdersService.createOrder({
+        status: 'DRAFT',
+        items: cart.map((cartItem) => ({
+          itemCode: cartItem.item.itemCode,
+          quantity: cartItem.quantity,
+        })),
+      });
+      toast.success('Order saved as pending');
+      navigate('/delivery-orders');
+    } catch (error) {
+      toast.error('Failed to create order');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMarkAsDelivered = async () => {
+    if (cart.length === 0) {
+      toast.error('Please add items to the order');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await DeliveryOrdersService.createOrder({
+        status: 'FINAL',
+        items: cart.map((cartItem) => ({
+          itemCode: cartItem.item.itemCode,
+          quantity: cartItem.quantity,
+        })),
+      });
+      toast.success('Order created and marked as delivered');
+      navigate('/delivery-orders');
+    } catch (error) {
+      toast.error('Failed to create order');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Layout>
+      <div className="space-y-6 max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold">Create Delivery Order</h1>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">Search & Add Items</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search by item code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-14 pl-14 text-lg"
+                autoFocus
+              />
+            </div>
+
+            {filteredItems.length > 0 && (
+              <div className="space-y-2">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.itemCode}
+                    className="flex justify-between items-center p-4 bg-muted rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                    onClick={() => addToCart(item)}
+                  >
+                    <div>
+                      <p className="font-semibold text-large">{item.itemCode}</p>
+                      <p className="text-muted-foreground">{item.itemName}</p>
+                      <p className="text-muted-foreground">
+                        Available: {item.qtyRemaining} | {item.godown}
+                      </p>
+                    </div>
+                    <Button size="sm" className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <ShoppingCart className="h-6 w-6" />
+              Order Items ({cart.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {cart.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground text-large">
+                No items added yet. Search and add items above.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {cart.map((cartItem) => (
+                  <div
+                    key={cartItem.item.itemCode}
+                    className="flex items-center gap-4 p-4 bg-muted rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <p className="font-semibold text-large">
+                        {cartItem.item.itemCode}
+                      </p>
+                      <p className="text-muted-foreground">{cartItem.item.itemName}</p>
+                      <p className="text-muted-foreground">
+                        {cartItem.item.godown} - Rack: {cartItem.item.rack || 'N/A'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="space-y-2">
+                        <Label>Quantity</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          max={cartItem.item.qtyRemaining}
+                          value={cartItem.quantity}
+                          onChange={(e) =>
+                            updateQuantity(cartItem.item.itemCode, parseInt(e.target.value) || 1)
+                          }
+                          className="w-24 h-12 text-lg text-center"
+                        />
+                      </div>
+
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => removeFromCart(cartItem.item.itemCode)}
+                        className="h-12 w-12"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="flex gap-4 pt-4">
+                  <Button
+                    variant="secondary"
+                    onClick={handleSaveAsPending}
+                    disabled={isLoading}
+                    className="btn-large flex-1"
+                  >
+                    Save as Pending
+                  </Button>
+                  <Button
+                    onClick={handleMarkAsDelivered}
+                    disabled={isLoading}
+                    className="btn-large flex-1"
+                  >
+                    Mark as Delivered
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
+  );
+}

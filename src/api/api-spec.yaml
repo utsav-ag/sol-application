@@ -1,0 +1,747 @@
+openapi: 3.0.3
+info:
+  title: Inventory Management API
+  version: 1.0.0
+  description: Swagger-ready API spec for Inventory Management Application.
+servers:
+  - url: http://localhost:8080
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: []
+paths:
+  /auth/login:
+    post:
+      summary: Login with phone number and password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: "9980936981"
+                password:
+                  type: string
+                  example: "xyv@123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5OTgwOTM2OTgxIiwicm9sZSI6IlNUT1JFX0VNUExPWUVFIiwia
+                  phoneNumber:
+                    type: string
+                    example: "9980936981"
+                  role:
+                    type: string
+                    example: STORE_EMPLOYEE
+
+  /api/items:
+    get:
+      summary: List all items
+      tags:
+        - Items
+      responses:
+        '200':
+          description: List of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    itemCode:
+                      type: string
+                      example: MT1003
+                    itemName:
+                      type: string
+                      example: Item One Updated
+                    itemImage:
+                      type: string
+                      example: http://example.com/image1-updated.jpg
+                    godown:
+                      type: string
+                      example: godown 1
+                    rack:
+                      type: string
+                      example: MT1003
+                    qty:
+                      type: integer
+                      example: 120
+                    qtyReserved:
+                      type: integer
+                      example: 0
+                    basePrice:
+                      type: number
+                      format: float
+                      example: 55.0
+                    gst:
+                      type: number
+                      format: float
+                      example: 18.0
+                    thickness:
+                      type: string
+                      example: MT1003
+                    type:
+                      type: string
+                      example: MT1003
+                    folder:
+                      type: string
+                      example: MT1003
+                    qtyRemaining:
+                      type: integer
+                      example: 120
+      security:
+        - BearerAuth: []
+
+    post:
+      summary: Create a new item
+      tags:
+        - Items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemCode:
+                  type: string
+                  example: MT1005
+                itemName:
+                  type: string
+                  example: Liner
+                itemImage:
+                  type: string
+                  example: https://example.com/image.jpg
+                godown:
+                  type: string
+                  example: shop
+                qty:
+                  type: integer
+                  example: 100
+                basePrice:
+                  type: number
+                  format: float
+                  example: 50.0
+                gst:
+                  type: number
+                  format: float
+                  example: 12.0
+                type:
+                  type: string
+                  example: Sunmica
+                thickness:
+                  type: string
+                  example: 0.7mm
+                folder:
+                  type: string
+                  example: 23/80
+      responses:
+        '200':
+          description: Item created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itemCode:
+                    type: string
+                    example: MT1005
+                  itemName:
+                    type: string
+                    example: Liner
+                  itemImage:
+                    type: string
+                    example: https://example.com/image.jpg
+                  godown:
+                    type: string
+                    example: shop
+                  rack:
+                    type: string
+                    example: null
+                  qty:
+                    type: integer
+                    example: 100
+                  qtyReserved:
+                    type: integer
+                    example: 0
+                  basePrice:
+                    type: number
+                    format: float
+                    example: 50.0
+                  gst:
+                    type: number
+                    format: float
+                    example: 12.0
+                  thickness:
+                    type: string
+                    example: 0.7mm
+                  type:
+                    type: string
+                    example: Sunmica
+                  folder:
+                    type: string
+                    example: 23/80
+                  qtyRemaining:
+                    type: integer
+                    example: 100
+      security:
+        - BearerAuth: []
+
+  /api/items/{itemCode}:
+    get:
+      summary: Get a single item by itemCode
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: itemCode
+          required: true
+          schema:
+            type: string
+            example: MT1005
+      responses:
+        '200':
+          description: Item details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itemCode:
+                    type: string
+                    example: MT1005
+                  itemName:
+                    type: string
+                    example: Item One Updated
+                  itemImage:
+                    type: string
+                    example: http://example.com/image1-updated.jpg
+                  godown:
+                    type: string
+                    example: godown 1
+                  rack:
+                    type: string
+                    example: MT1005
+                  qty:
+                    type: integer
+                    example: 120
+                  qtyReserved:
+                    type: integer
+                    example: 0
+                  basePrice:
+                    type: number
+                    format: float
+                    example: 55.0
+                  gst:
+                    type: number
+                    format: float
+                    example: 12.0
+                  thickness:
+                    type: string
+                    example: MT1005
+                  type:
+                    type: string
+                    example: MT1005
+                  folder:
+                    type: string
+                    example: MT1005
+                  qtyRemaining:
+                    type: integer
+                    example: 120
+      security:
+        - BearerAuth: []
+
+    put:
+      summary: Update an item by itemCode
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: itemCode
+          required: true
+          schema:
+            type: string
+            example: MT1005
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemName:
+                  type: string
+                  example: Item One Updated
+                itemImage:
+                  type: string
+                  example: http://example.com/image1-updated.jpg
+                godown:
+                  type: string
+                  example: godown 1
+                qty:
+                  type: integer
+                  example: 120
+                basePrice:
+                  type: number
+                  format: float
+                  example: 55.0
+                gst:
+                  type: number
+                  format: float
+                  example: 12.0
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itemCode:
+                    type: string
+                    example: MT1005
+                  itemName:
+                    type: string
+                    example: Item One Updated
+                  itemImage:
+                    type: string
+                    example: http://example.com/image1-updated.jpg
+                  godown:
+                    type: string
+                    example: godown 1
+                  rack:
+                    type: string
+                    example: MT1005
+                  qty:
+                    type: integer
+                    example: 120
+                  qtyReserved:
+                    type: integer
+                    example: 0
+                  basePrice:
+                    type: number
+                    format: float
+                    example: 55.0
+                  gst:
+                    type: number
+                    format: float
+                    example: 12.0
+                  thickness:
+                    type: string
+                    example: MT1005
+                  type:
+                    type: string
+                    example: MT1005
+                  folder:
+                    type: string
+                    example: MT1005
+                  qtyRemaining:
+                    type: integer
+                    example: 120
+      security:
+        - BearerAuth: []
+
+  # DELIVERY ORDERS - PART 2
+  /api/delivery-orders:
+    get:
+      summary: List all delivery orders
+      tags:
+        - DeliveryOrders
+      responses:
+        '200':
+          description: List of delivery orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 9
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2025-10-05T13:41:56.353732"
+                    deliveryItems:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 20
+                          item:
+                            type: object
+                            properties:
+                              itemCode:
+                                type: string
+                                example: MT1005
+                              itemName:
+                                type: string
+                                example: Item One Updated
+                              itemImage:
+                                type: string
+                                example: http://example.com/image1-updated.jpg
+                              godown:
+                                type: string
+                                example: godown 1
+                              rack:
+                                type: string
+                                example: MT1005
+                              qty:
+                                type: integer
+                                example: 115
+                              qtyReserved:
+                                type: integer
+                                example: 0
+                              basePrice:
+                                type: number
+                                format: float
+                                example: 55.0
+                              gst:
+                                type: number
+                                format: float
+                                example: 12.0
+                              thickness:
+                                type: string
+                                example: MT1005
+                              type:
+                                type: string
+                                example: MT1005
+                              folder:
+                                type: string
+                                example: MT1005
+                              qtyRemaining:
+                                type: integer
+                                example: 115
+                          quantity:
+                            type: integer
+                            example: 5
+                    status:
+                      type: string
+                      example: FINAL
+      security:
+        - BearerAuth: []
+
+    post:
+      summary: Create a new delivery order
+      tags:
+        - DeliveryOrders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: DRAFT
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      itemCode:
+                        type: string
+                        example: MT1005
+                      quantity:
+                        type: integer
+                        example: 10
+      responses:
+        '200':
+          description: Delivery order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 9
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2025-10-05T13:41:56.353732"
+                  deliveryItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 19
+                        item:
+                          type: object
+                          properties:
+                            itemCode:
+                              type: string
+                              example: MT1005
+                            itemName:
+                              type: string
+                              example: Item One Updated
+                            itemImage:
+                              type: string
+                              example: http://example.com/image1-updated.jpg
+                            godown:
+                              type: string
+                              example: godown 1
+                            rack:
+                              type: string
+                              example: MT1005
+                            qty:
+                              type: integer
+                              example: 120
+                            qtyReserved:
+                              type: integer
+                              example: 10
+                            basePrice:
+                              type: number
+                              format: float
+                              example: 55.0
+                            gst:
+                              type: number
+                              format: float
+                              example: 12.0
+                            thickness:
+                              type: string
+                              example: MT1005
+                            type:
+                              type: string
+                              example: MT1005
+                            folder:
+                              type: string
+                              example: MT1005
+                            qtyRemaining:
+                              type: integer
+                              example: 110
+                        quantity:
+                          type: integer
+                          example: 10
+                  status:
+                    type: string
+                    example: DRAFT
+      security:
+        - BearerAuth: []
+
+  /api/delivery-orders/{orderId}/items:
+    put:
+      summary: Update delivery order items
+      tags:
+        - DeliveryOrders
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            example: 9
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: DRAFT
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      itemCode:
+                        type: string
+                        example: MT1005
+                      quantity:
+                        type: integer
+                        example: 5
+      responses:
+        '200':
+          description: Updated delivery order items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 9
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2025-10-05T13:41:56.353732"
+                  deliveryItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 20
+                        item:
+                          type: object
+                          properties:
+                            itemCode:
+                              type: string
+                              example: MT1005
+                            itemName:
+                              type: string
+                              example: Item One Updated
+                            itemImage:
+                              type: string
+                              example: http://example.com/image1-updated.jpg
+                            godown:
+                              type: string
+                              example: godown 1
+                            rack:
+                              type: string
+                              example: MT1005
+                            qty:
+                              type: integer
+                              example: 120
+                            qtyReserved:
+                              type: integer
+                              example: 5
+                            basePrice:
+                              type: number
+                              format: float
+                              example: 55.0
+                            gst:
+                              type: number
+                              format: float
+                              example: 12.0
+                            thickness:
+                              type: string
+                              example: MT1005
+                            type:
+                              type: string
+                              example: MT1005
+                            folder:
+                              type: string
+                              example: MT1005
+                            qtyRemaining:
+                              type: integer
+                              example: 115
+                        quantity:
+                          type: integer
+                          example: 5
+                  status:
+                    type: string
+                    example: DRAFT
+      security:
+        - BearerAuth: []
+
+  /api/delivery-orders/{orderId}/status:
+    put:
+      summary: Update delivery order status
+      tags:
+        - DeliveryOrders
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            example: 9
+        - in: query
+          name: status
+          required: true
+          schema:
+            type: string
+            example: FINAL
+      responses:
+        '200':
+          description: Delivery order status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 9
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2025-10-05T13:41:56.353732"
+                  deliveryItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 20
+                        item:
+                          type: object
+                          properties:
+                            itemCode:
+                              type: string
+                              example: MT1005
+                            itemName:
+                              type: string
+                              example: Item One Updated
+                            itemImage:
+                              type: string
+                              example: http://example.com/image1-updated.jpg
+                            godown:
+                              type: string
+                              example: godown 1
+                            rack:
+                              type: string
+                              example: MT1005
+                            qty:
+                              type: integer
+                              example: 115
+                            qtyReserved:
+                              type: integer
+                              example: 0
+                            basePrice:
+                              type: number
+                              format: float
+                              example: 55.0
+                            gst:
+                              type: number
+                              format: float
+                              example: 12.0
+                            thickness:
+                              type: string
+                              example: MT1005
+                            type:
+                              type: string
+                              example: MT1005
+                            folder:
+                              type: string
+                              example: MT1005
+                            qtyRemaining:
+                              type: integer
+                              example: 115
+                        quantity:
+                          type: integer
+                          example: 5
+                  status:
+                    type: string
+                    example: FINAL
+      security:
+        - BearerAuth: []
