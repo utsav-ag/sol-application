@@ -6,9 +6,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import ItemSearch from "./pages/ItemSearch";
-import DeliveryOrders from "./pages/DeliveryOrders";
-import CreateDeliveryOrder from "./pages/CreateDeliveryOrder";
+import ItemSearchNew from "./pages/ItemSearchNew";
+import DeliveryOrdersNew from "./pages/DeliveryOrdersNew";
+import CreateDeliveryOrderNew from "./pages/CreateDeliveryOrderNew";
+import EditDeliveryOrder from "./pages/EditDeliveryOrder";
+import ItemManagement from "./pages/ItemManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +33,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, role } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to={role === 'ADMIN' ? '/dashboard' : '/search'} replace />;
+    return <Navigate to={role === 'ADMIN' ? '/items' : '/search'} replace />;
   }
 
   return <>{children}</>;
@@ -44,9 +46,11 @@ function AppRoutes() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       
       <Route path="/dashboard" element={<ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>} />
-      <Route path="/search" element={<ProtectedRoute><ItemSearch /></ProtectedRoute>} />
-      <Route path="/delivery-orders" element={<ProtectedRoute><DeliveryOrders /></ProtectedRoute>} />
-      <Route path="/delivery-orders/create" element={<ProtectedRoute><CreateDeliveryOrder /></ProtectedRoute>} />
+      <Route path="/items" element={<ProtectedRoute adminOnly><ItemManagement /></ProtectedRoute>} />
+      <Route path="/search" element={<ProtectedRoute><ItemSearchNew /></ProtectedRoute>} />
+      <Route path="/delivery-orders" element={<ProtectedRoute><DeliveryOrdersNew /></ProtectedRoute>} />
+      <Route path="/create-order" element={<ProtectedRoute><CreateDeliveryOrderNew /></ProtectedRoute>} />
+      <Route path="/edit-order/:id" element={<ProtectedRoute><EditDeliveryOrder /></ProtectedRoute>} />
       
       <Route path="*" element={<NotFound />} />
     </Routes>

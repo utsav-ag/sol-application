@@ -20,4 +20,8 @@ export class ItemsService {
   ): Promise<Item> {
     return ApiClient.put<Item>(`/api/items/${itemCode}`, updates);
   }
+
+  static async deleteItem(itemCode: string): Promise<void> {
+    return ApiClient.delete(`/api/items/${itemCode}`);
+  }
 }
