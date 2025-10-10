@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { DesktopNav } from '@/components/DesktopNav';
@@ -9,6 +10,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { isAuthenticated } = useAuth();
+  const isMobile = useIsMobile();
 
   if (!isAuthenticated) {
     return <>{children}</>;
@@ -16,7 +18,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <DesktopNav />
+      {!isMobile && (<DesktopNav /> )}
       <main className="md:container md:mx-auto">
         {children}
       </main>

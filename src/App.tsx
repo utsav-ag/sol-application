@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ItemSearchNew from "./pages/ItemSearchNew";
 import DeliveryOrdersNew from "./pages/DeliveryOrdersNew";
-import CreateDeliveryOrderNew from "./pages/CreateDeliveryOrderNew";
+import CreateDeliveryOrder from "./pages/CreateDeliveryOrder";
 import EditDeliveryOrder from "./pages/EditDeliveryOrder";
 import ItemManagement from "./pages/ItemManagement";
 import NotFound from "./pages/NotFound";
@@ -49,7 +49,7 @@ function AppRoutes() {
       <Route path="/items" element={<ProtectedRoute adminOnly><ItemManagement /></ProtectedRoute>} />
       <Route path="/search" element={<ProtectedRoute><ItemSearchNew /></ProtectedRoute>} />
       <Route path="/delivery-orders" element={<ProtectedRoute><DeliveryOrdersNew /></ProtectedRoute>} />
-      <Route path="/create-order" element={<ProtectedRoute><CreateDeliveryOrderNew /></ProtectedRoute>} />
+      <Route path="/create-order" element={<ProtectedRoute><CreateDeliveryOrder /></ProtectedRoute>} />
       <Route path="/edit-order/:id" element={<ProtectedRoute><EditDeliveryOrder /></ProtectedRoute>} />
       
       <Route path="*" element={<NotFound />} />

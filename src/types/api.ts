@@ -1,3 +1,5 @@
+import { UUID } from "crypto";
+
 export interface LoginRequest {
   phoneNumber: string;
   password: string;
@@ -54,6 +56,8 @@ export interface DeliveryOrderItem {
 }
 
 export interface DeliveryOrder {
+  //customerName: ReactNode;
+  //customerPhone: ReactNode;
   id: number;
   createdAt: string;
   deliveryItems: DeliveryOrderItem[];
@@ -66,6 +70,8 @@ export interface CreateDeliveryOrderRequest {
     itemCode: string;
     quantity: number;
   }>;
+  customerid: string;
+  customerphone: number;
 }
 
 export interface UpdateDeliveryOrderItemsRequest {
@@ -74,4 +80,6 @@ export interface UpdateDeliveryOrderItemsRequest {
     itemCode: string;
     quantity: number;
   }>;
+  customerid: string;
+  customerphone: number;
 }

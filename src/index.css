@@ -93,7 +93,19 @@
 
   /* Large, accessible focus outlines */
   *:focus-visible {
-    @apply outline-none ring-4 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-blue-400 ring-offset-1;
+  }
+
+  /* For inputs and form elements specifically */
+  input:focus-visible {
+    @apply outline-none ring-0 ring-gray-200 ring-offset-0;
+  }
+
+  /* For inputs and form elements specifically */
+  button:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-none ring-1 ring-orange-400 ring-offset-0;
   }
 
   h1, h2, h3, h4, h5, h6 {
